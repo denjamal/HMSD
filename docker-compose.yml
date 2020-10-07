@@ -1,0 +1,13 @@
+version: '3.6'
+
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: WebApi/Dockerfile
+
+  webapi.gateway:
+    build:
+      context: .
+      dockerfile: WebApi.Gateway/Dockerfile
+
