@@ -15,6 +15,7 @@ namespace Infrastructure.Configuration
                 .PersistKeysToFileSystem(new DirectoryInfo("./keys"));
 
             serviceCollection.AddTransient<ICipher, Cipher>();
+            serviceCollection.AddTransient<IKeyService, KeyService>();
         }
     }
 }

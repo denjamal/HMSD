@@ -1,5 +1,9 @@
-﻿using Domain.Services;
+﻿using System;
+using System.Security.Cryptography;
+using System.Text;
+using Domain.Services;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Infrastructure.Services
 {
@@ -19,7 +23,26 @@ namespace Infrastructure.Services
 
         public string Decrypt(string payload)
         {
-            return _protector.Unprotect(payload);
+            try
+            {
+                return _protector.Unprotect(payload);
+            }
+            catch (CryptographicException e)
+            {
+                var persistedProtector = _protector as IPersistedDataProtector;
+                if (persistedProtector == null)
+                {
+                    throw new Exception("Can't call DangerousUnprotect.");
+                }
+
+                var plain = persistedProtector.DangerousUnprotect(
+                    WebEncoders.Base64UrlDecode(payload),
+                    true,
+                    out var migrate,
+                    out var revoked);
+                return Encoding.UTF8.GetString(plain);
+            }
+            
         }
     }
 }
