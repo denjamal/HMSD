@@ -6,5 +6,6 @@
         public string EncryptUrl { get; set; }
         public string DecryptUrl { get; set; }
         public string RotateUrl { get; set; }
+        public string Health { get; set; }
     }
 }

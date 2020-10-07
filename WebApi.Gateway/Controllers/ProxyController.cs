@@ -9,13 +9,12 @@ using WebApi.Gateway.Settings;
 namespace WebApi.Gateway.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class DataController : ControllerBase
+    public class ProxyController : ControllerBase
     {
         private readonly HttpClient _httpClient;
         private readonly EncryptionServiceApi _encryptionServiceApi;
 
-        public DataController(IHttpClientFactory factory, EncryptionServiceApi encryptionServiceApi)
+        public ProxyController(IHttpClientFactory factory, EncryptionServiceApi encryptionServiceApi)
         {
             _encryptionServiceApi = encryptionServiceApi;
             var client = factory.CreateClient();
@@ -23,7 +22,8 @@ namespace WebApi.Gateway.Controllers
             _httpClient = client;
         }
 
-        [HttpPost("encrypt")]
+        [Route("data/encrypt")]
+        [HttpPost]
         public async Task<IActionResult> EncryptAsync([FromBody] string payload)
         {
             var requestData = JsonSerializer.Serialize(payload);
@@ -40,7 +40,8 @@ namespace WebApi.Gateway.Controllers
             }
         }
 
-        [HttpPost("decrypt")]
+        [Route("data/decrypt")]
+        [HttpPost]
         public async Task<IActionResult> DecryptAsync([FromBody] string payload)
         {
             var requestData = JsonSerializer.Serialize(payload);
@@ -57,10 +58,28 @@ namespace WebApi.Gateway.Controllers
             }
         }
 
-        [HttpPost("rotateKeys")]
+        [Route("keys/rotate")]
+        [HttpPost]
         public async Task<IActionResult> RotateAsync()
         {
             var response = await _httpClient.PostAsync(_encryptionServiceApi.RotateUrl, null);
+
+            try
+            {
+                response.EnsureSuccessStatusCode();
+                return Ok(await response.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error: " + ex.HResult.ToString("X") + " Message: " + ex.Message);
+            }
+        }
+
+        [Route("health")]
+        [HttpGet]
+        public async Task<IActionResult> Health()
+        {
+            var response = await _httpClient.GetAsync(_encryptionServiceApi.Health);
 
             try
             {
