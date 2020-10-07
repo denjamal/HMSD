@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WebApi.Gateway.Settings;
 
 namespace WebApi.Gateway
 {
@@ -20,6 +21,12 @@ namespace WebApi.Gateway
         {
             services.AddControllers();
             services.AddHttpClient();
+            services.AddSingleton((serviceProvider) =>
+            {
+                var settingsApi = new EncryptionServiceApi();
+                Configuration.GetSection("EncryptionServiceApi").Bind(settingsApi);
+                return settingsApi;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
