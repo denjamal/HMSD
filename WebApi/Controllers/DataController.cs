@@ -18,7 +18,7 @@ namespace WebApi.Controllers
         public IActionResult Encrypt([FromBody] string payload)
         {
             var result = _cipher.Encrypt(payload);
-            
+
             return Ok(result);
         }
 
