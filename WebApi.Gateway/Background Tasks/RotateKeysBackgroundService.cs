@@ -34,13 +34,11 @@ namespace WebApi.Gateway.Background_Tasks
 
         private void RotateKeys(object state)
         {
-            _logger.LogInformation("Rotating keys");
-
-            using var client = GetHttpClient();
-            var response = client.PostAsync(_encryptionServiceApi.RotateUrl, null).Result;
-
             try
             {
+                _logger.LogInformation("Rotating keys");
+                using var client = GetHttpClient();
+                var response = client.PostAsync(_encryptionServiceApi.RotateUrl, null).Result;
                 response.EnsureSuccessStatusCode();
                 _logger.LogInformation("Rotating keys success!");
             }
