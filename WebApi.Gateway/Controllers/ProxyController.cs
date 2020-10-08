@@ -24,7 +24,7 @@ namespace WebApi.Gateway.Controllers
 
         [Route("data/encrypt")]
         [HttpPost]
-        public async Task<IActionResult> EncryptAsync([FromBody] string payload)
+        public async Task<IActionResult> EncryptAsync([FromForm] string payload)
         {
             var requestData = JsonSerializer.Serialize(payload);
             var response = await _httpClient.PostAsync(_encryptionServiceApi.EncryptUrl, new StringContent(requestData, Encoding.UTF8, "application/json"));
@@ -42,7 +42,7 @@ namespace WebApi.Gateway.Controllers
 
         [Route("data/decrypt")]
         [HttpPost]
-        public async Task<IActionResult> DecryptAsync([FromBody] string payload)
+        public async Task<IActionResult> DecryptAsync([FromForm] string payload)
         {
             var requestData = JsonSerializer.Serialize(payload);
             var response = await _httpClient.PostAsync(_encryptionServiceApi.DecryptUrl, new StringContent(requestData, Encoding.UTF8, "application/json"));
