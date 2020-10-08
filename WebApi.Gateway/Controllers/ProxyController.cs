@@ -58,23 +58,6 @@ namespace WebApi.Gateway.Controllers
             }
         }
 
-        [Route("keys/rotate")]
-        [HttpPost]
-        public async Task<IActionResult> RotateAsync()
-        {
-            var response = await _httpClient.PostAsync(_encryptionServiceApi.RotateUrl, null);
-
-            try
-            {
-                response.EnsureSuccessStatusCode();
-                return Ok(await response.Content.ReadAsStringAsync());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Error: " + ex.HResult.ToString("X") + " Message: " + ex.Message);
-            }
-        }
-
         [Route("health")]
         [HttpGet]
         public async Task<IActionResult> Health()
